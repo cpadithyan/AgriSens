@@ -46,13 +46,18 @@ if test_image is not None:
 
     #Predict button
     if st.button("Predict"):
-    if test_image is not None:
+    if test_image is not None:  # Ensure an image is uploaded
         st.snow()
         st.write("Our Prediction")
-        result_index = model_prediction(image)  # Pass image, not file
+        
+        # Process the uploaded image correctly
+        result_index = model_prediction(image)  # Pass the image, not file
+
+        # Display the result
         st.success(f"Model is Predicting it's a {class_name[result_index]}")
     else:
         st.error("Please upload an image before predicting.")
+
 
         #Reading Labels
         class_name = ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
