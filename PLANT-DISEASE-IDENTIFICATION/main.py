@@ -1,13 +1,14 @@
 import streamlit as st
 import tensorflow as tf
 import numpy as np
-def model_prediction(test_image):
+def model_prediction(image):
     model = tf.keras.models.load_model("trained_plant_disease_model.keras")
-    image = tf.keras.preprocessing.image.load_img(test_image,target_size=(128,128))
-    input_arr = tf.keras.preprocessing.image.img_to_array(image)
-    input_arr = np.array([input_arr]) #convert single image to batch
+    image = image.resize((128, 128))  # Resize directly using PIL
+    input_arr = np.array(image) / 255.0  # Normalize
+    input_arr = np.expand_dims(input_arr, axis=0)  # Convert single image to batch
     predictions = model.predict(input_arr)
-    return np.argmax(predictions) #return index of max element
+    return np.argmax(predictions)  # Return index of max element
+
 
 #Sidebar
 st.sidebar.title("AgriSens")
@@ -15,8 +16,16 @@ app_mode = st.sidebar.selectbox("Select Page",["HOME","DISEASE RECOGNITION"])
 #app_mode = st.sidebar.selectbox("Select Page",["Home","About","Disease Recognition"])
 
 # import Image from pillow to open images
-from PIL import Image
-img = Image.open("Diseases.png")
+# from PIL import Image
+# img = Image.open("Diseases.png")
+
+import os
+if os.path.exists("Diseases.png"):
+    img = Image.open("Diseases.png")
+    st.image(img, caption="Plant Disease Identification", use_column_width=True)
+else:
+    st.error("Error: Diseases.png not found. Please check the file path.")
+
 
 # display image using streamlit
 # width is used to set the width of an image
@@ -29,14 +38,22 @@ if(app_mode=="HOME"):
 #Prediction Page
 elif(app_mode=="DISEASE RECOGNITION"):
     st.header("DISEASE RECOGNITION")
-    test_image = st.file_uploader("Choose an Image:")
-    if(st.button("Show Image")):
-        st.image(test_image,width=4,use_column_width=True)
+    test_image = st.file_uploader("Choose an Image:", type=["png", "jpg", "jpeg"])
+
+if test_image is not None:
+    image = Image.open(test_image)  # Open the uploaded image
+    st.image(image, caption="Uploaded Image", use_column_width=True)
+
     #Predict button
-    if(st.button("Predict")):
+    if st.button("Predict"):
+    if test_image is not None:
         st.snow()
         st.write("Our Prediction")
-        result_index = model_prediction(test_image)
+        result_index = model_prediction(image)  # Pass image, not file
+        st.success(f"Model is Predicting it's a {class_name[result_index]}")
+    else:
+        st.error("Please upload an image before predicting.")
+
         #Reading Labels
         class_name = ['Apple___Apple_scab', 'Apple___Black_rot', 'Apple___Cedar_apple_rust', 'Apple___healthy',
                     'Blueberry___healthy', 'Cherry_(including_sour)___Powdery_mildew', 
