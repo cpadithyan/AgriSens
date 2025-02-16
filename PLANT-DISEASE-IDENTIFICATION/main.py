@@ -47,8 +47,8 @@ if test_image is not None:
     #Predict button
     if st.button("Predict"):
     if test_image is not None:  # Ensure an image is uploaded
-        st.snow()
-        st.write("Our Prediction")
+            st.snow()
+            st.write("Our Prediction")
         
         # Process the uploaded image correctly
         result_index = model_prediction(image)  # Pass the image, not file
