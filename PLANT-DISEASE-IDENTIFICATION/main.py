@@ -51,7 +51,7 @@ elif app_mode == "DISEASE RECOGNITION":
         st.image(test_image, use_container_width=True)  # ✅ Fixed deprecation issue
     
         if st.button("Predict"):
-            st.snow()
+            # st.snow()
             st.write("Our Prediction:")
             
             result_index = model_prediction(test_image)
